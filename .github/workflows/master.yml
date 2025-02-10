@@ -38,7 +38,7 @@ jobs:
         run: dotnet restore
       
       - name: Build
-        run dotnet build -c Release --no-restore
+        run: dotnet build -c Release --no-restore
 
       - name: Publish
         run: dotnet publish decore-hub-web.csproj -c Release -o docs --nologo
@@ -47,7 +47,7 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Upload
-        uses actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v3
 
       - name: Deploy
         id: deployment
