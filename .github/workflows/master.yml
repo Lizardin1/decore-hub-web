@@ -1,0 +1,57 @@
+name: Deploy
+
+on:
+  push: 
+    branchs: ["master"]
+
+  workflow_dispatch:
+  
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    enviroment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chekcout
+        uses: actions/checkout@v4
+      
+      - name: Install .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      
+      - name: Install .NET Wasm Tolls
+        run: dotnet workload install wasm-tools
+
+      - name: Restore Dependecies
+        run: dotnet restore
+      
+      - name: Build
+        run dotnet build -c Release --no-restore
+
+      - name: Publish
+        run: dotnet publish decore-hub-web.csproj -c Release -o docs --nologo
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload
+        uses actions/upload-pages-artifact@v3
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+       
+
+    
