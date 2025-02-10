@@ -1,16 +1,102 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+<MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+<style>
+    .menu-item:hover {
+        border-bottom: 3px solid #a1a1a1;
+    }
+</style>
+<MudLayout>
+    <MudAppBar Dense="false" Elevation="1">
+        <MudMenu Class="menu-item" Label="Calculadora de preços" Variant="Variant.Text" Size="Size.Large" StartIcon="@Icons.Custom.Brands.Calculator" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+            <MudMenuItem Href="/calculadora/calcular" Style="width:250px;" Label="Calculadora" />
+            <MudMenuItem Href="/calculadora/config" Label="Configurações" />
+        </MudMenu>
+        <MudMenu Class="menu-item" Label="Controle de estoque" Variant="Variant.Text" Size="Size.Large" StartIcon="@Icons.Material.Filled.Calculate" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+            <MudMenuItem Href="/controle-estoque/estoque-tempo-real" Style="width:250px;" Label="Estoque em tempo real" />
+            <MudMenuItem Label="Estoque mínimo" />
+            <MudMenuItem Href="/controle-estoque/curve-abc" Label="Curva ABC" />
+            <MudMenuItem Label="Log de movimentações" />
+        </MudMenu>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+        <MudIconButton Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => DarkModeToggle())" />
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _isDarkMode = true;
+    private MudTheme? _theme = null;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _theme = new()
+            {
+                PaletteLight = _lightPalette,
+                PaletteDark = _darkPalette,
+                LayoutProperties = new LayoutProperties()
+            };
+    }
+
+    private void DarkModeToggle()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+
+    private readonly PaletteLight _lightPalette = new()
+        {
+            Black = "#110e2d",
+            AppbarText = "#424242",
+            Surface = "#fffafa",
+            AppbarBackground = "#fffafa",
+            DrawerBackground = "#fffafa",
+            GrayLight = "#e8e8e8",
+            GrayLighter = "#f9f9f9",
+        };
+
+    private readonly PaletteDark _darkPalette = new()
+        {
+            Primary = "#7e6fff",
+            Surface = "#252525",
+            Background = "#222222",
+            BackgroundGray = "#151521",
+            AppbarText = "#92929f",
+            AppbarBackground = "#111111",
+            DrawerBackground = "#111111",
+            ActionDefault = "#74718e",
+            ActionDisabled = "#9999994d",
+            ActionDisabledBackground = "#605f6d4d",
+            TextPrimary = "#b2b0bf",
+            TextSecondary = "#92929f",
+            TextDisabled = "#ffffff33",
+            DrawerIcon = "#92929f",
+            DrawerText = "#92929f",
+            GrayLight = "#2a2833",
+            GrayLighter = "#1e1e2d",
+            Info = "#4a86ff",
+            Success = "#3dcb6c",
+            Warning = "#ffb545",
+            Error = "#ff3f5f",
+            LinesDefault = "#33323e",
+            TableLines = "#33323e",
+            Divider = "#292838",
+            OverlayLight = "#1e1e2d80",
+            
+        };
+
+
+    public string DarkLightModeButtonIcon => _isDarkMode switch
+    {
+        true => Icons.Material.Rounded.LightMode,
+        false => Icons.Material.Outlined.DarkMode,
+    };
+}
