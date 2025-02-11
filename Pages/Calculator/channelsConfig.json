@@ -1,0 +1,59 @@
+[
+  {
+    "Id": 1,
+    "Channel": "Mercado Livre",
+    "adsPercent": 10.0,
+    "comissionPercent": 0.16,
+    "taxPercent": 16.5,
+    "variableComission": [
+    ]
+  },
+  {
+    "Id": 2,
+    "Channel": "Amazon",
+    "adsPercent": 10.00,
+    "comissionPercent": 14.0,
+    "taxPercent": 16.5,
+    "variableComission": [
+      {
+        "Id": "8ff8de9b-1fe8-49aa-be73-ec2ccdd1edb8",
+        "startValue": 0.0,
+        "endValue": 200.0,
+        "percent": 10.0
+      },
+      {
+        "Id": "b0e97037-b98a-4881-a7e6-e2007d0f7b45",
+        "startValue": 200.01,
+        "endValue": 9999.90,
+        "percent": 15.0
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "Channel": "Shopee",
+    "adsPercent": 10.00,
+    "comissionPercent": 20.00,
+    "taxPercent": 16.5,
+    "variableComission": [
+    ]
+  },
+  {
+    "Id": 4,
+    "Channel": "Site",
+    "adsPercent": 22.00,
+    "comissionPercent": 33.00,
+    "taxPercent": 16.5,
+    "variableComission": [
+    ]
+  },
+  {
+    "Id": 5,
+    "Channel": "Madeira",
+    "adsPercent": 0.00,
+    "comissionPercent": 20.00,
+    "taxPercent": 16.5,
+    "variableComission": [
+    ]
+  }
+]

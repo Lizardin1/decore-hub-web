@@ -1,0 +1,134 @@
+﻿@inject ISnackbar SnackBar
+@inject IJSRuntime JS
+
+
+<MudContainer Class="mt-10 px-2 mb-20">
+    <MudGrid>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+            <MudItem sm="10" xs="12">
+                <MudButton Color="Color.Primary" Style="border-radius: 25px;" OnClick="Clear" Variant="Variant.Outlined">
+                    <MudIcon Class="ml-n2" Color="Color.Primary" Icon="@Icons.Material.Rounded.Clear" Size="Size.Medium" />
+                    <MudText Style="font-size:19px;" Class="ml-2">Limpar</MudText>
+                </MudButton>
+                <MudButton Color="Color.Primary" Style="border-radius: 25px;" OnClick="DownloadFile" Variant="Variant.Outlined">
+                    <MudIcon Class="ml-n2" Color="Color.Primary" Icon="@Icons.Material.Rounded.Download" Size="Size.Medium" />
+                    <MudText Style="font-size:19px;" Class="ml-2">Exportar</MudText>
+                </MudButton>
+            </MudItem>
+        </MudHidden>
+        @if (channel.Channel == "Mercado Livre")
+        {
+            <MudItem xs="2">
+                <MudSwitch Class="pt-4" T="bool" Value="AdClassOrPremium" ValueChanged="CalculateWithoutVariableComission"  Label="Anúncio Premium" Color="Color.Info" Size="Size.Large" Style="width:70px; height: 40px;" />
+            </MudItem>
+            comissionHelper = "11% Classic / 16.5% Premium";
+        }
+        <MudItem sm="4" xs="12">
+            <MudText Class="ml-2">Margem desejada</MudText>
+            <MudNumericField HideSpinButtons="true"
+                             Format="N2"
+                             Culture="culture"
+                             @bind-Value="marginPercent"
+                             AdornmentIcon="@Icons.Material.Rounded.Percent"
+                             Adornment="Adornment.End"
+                             Variant="Variant.Outlined"
+                             TextChanged="CalculateWithoutVariableComission" />
+        </MudItem>
+        <MudItem sm="4" xs="12">
+            <MudText Class="ml-2">Preço de compra</MudText>
+            <MudNumericField HideSpinButtons="true"
+                             Culture="culture"
+                             Format="N2"
+                             @bind-Value="buy_cost"
+                             AdornmentIcon="@Icons.Material.Rounded.AttachMoney"
+                             Adornment="Adornment.End"
+                             Variant="Variant.Outlined"
+                             TextChanged="CalculateWithoutVariableComission" />
+        </MudItem>
+
+        <MudItem sm="4" xs="10">
+            <MudText Class="ml-2">Preço de frete</MudText>
+            <MudNumericField HideSpinButtons="true"
+                             Culture="culture"
+                             Format="N2"
+                             @bind-Value="freight_cost"
+                             AdornmentIcon="@Icons.Material.Rounded.AttachMoney"
+                             Adornment="Adornment.End"
+                             Variant="Variant.Outlined"
+                             Clearable="true"
+                             TextChanged="CalculateWithoutVariableComission" />
+        </MudItem>
+
+        <MudItem sm="4" xs="12">
+            <MudText Class="ml-2">Cupom</MudText>
+            <MudNumericField HideSpinButtons="true"
+                             Culture="culture"
+                             Format="N2"
+                             @bind-Value="cupon"
+                             AdornmentIcon="@Icons.Material.Rounded.AttachMoney"
+                             Adornment="Adornment.End"
+                             Variant="Variant.Outlined"
+                             TextChanged="CalculateWithoutVariableComission" />
+        </MudItem>
+        <MudItem sm="4" xs="12">
+            <MudText Class="ml-2">Custo de envio</MudText>
+            <MudNumericField HideSpinButtons="true"
+                             Culture="culture"
+                             Format="N2"
+                             @bind-Value="ship_cost"
+                             AdornmentIcon="@Icons.Material.Rounded.AttachMoney"
+                             Adornment="Adornment.End"
+                             Variant="Variant.Outlined"
+                             TextChanged="CalculateWithoutVariableComission" />
+        </MudItem>
+
+        <MudDivider Class="mt-8" Style="height: 2.2px; background-color: #666666" />
+
+        <MudItem sm="3" xs="12">
+            <MudText Class="ml-2">Comissão</MudText>
+            <MudField AdornmentIcon="@Icons.Material.Rounded.AttachMoney"
+                      Adornment="Adornment.End"
+                      Variant="Variant.Outlined"
+                      HelperText="@comissionHelper">@comission.ToString("F2")</MudField>
+        </MudItem>
+        <MudItem sm="3" xs="12">
+            <MudText Class="ml-2">Ads</MudText>
+            <MudField AdornmentIcon="@Icons.Material.Rounded.AttachMoney"
+                      Adornment="Adornment.End"
+                      Variant="Variant.Outlined"
+                      HelperText="@adsHelper">@ads.ToString("F2")</MudField>
+        </MudItem>
+        <MudItem sm="3" xs="12">
+            <MudText Class="ml-2">Imposto</MudText>
+            <MudField AdornmentIcon="@Icons.Material.Rounded.AttachMoney"
+                      Adornment="Adornment.End"
+                      Variant="Variant.Outlined"
+                      HelperText="@taxHelper">@tax.ToString("F2")</MudField>
+        </MudItem>
+        <MudItem sm="3" xs="12">
+            <MudText Class="ml-2">P.C</MudText>
+            <MudField AdornmentIcon="@Icons.Material.Rounded.Percent"
+                      Adornment="Adornment.End"
+                      Variant="Variant.Outlined"
+                      HelperText="Margem / Preço de compra">@pc</MudField>
+        </MudItem>
+
+        <MudItem sm="12" xs="12">
+            <MudText Class="d-flex justify-center" Typo="Typo.h6">Seu preço final é de: R$ @salePrice.ToString("F2")</MudText>
+            <MudText Class="d-flex justify-center" Typo="Typo.body1">Margem: R$ @margin.ToString("F2")</MudText>
+        </MudItem>
+
+        <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
+            <MudItem Class="d-flex justify-center" xs="12">
+                <MudButton Color="Color.Primary" Style="border-radius: 25px;" OnClick="Clear" Variant="Variant.Outlined">
+                    <MudIcon Class="ml-n2" Color="Color.Primary" Icon="@Icons.Material.Rounded.Clear" Size="Size.Medium" />
+                    <MudText Style="font-size:19px;" Class="ml-2">Limpar</MudText>
+                </MudButton>
+                <MudButton Color="Color.Primary" Style="border-radius: 25px;" OnClick="DownloadFile" Variant="Variant.Outlined">
+                    <MudIcon Class="ml-n2" Color="Color.Primary" Icon="@Icons.Material.Rounded.Download" Size="Size.Medium" />
+                    <MudText Style="font-size:19px;" Class="ml-2">Exportar</MudText>
+                </MudButton>
+            </MudItem>
+        </MudHidden>
+    </MudGrid>
+</MudContainer>

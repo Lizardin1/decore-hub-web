@@ -1,7 +1,37 @@
 ﻿@page "/calculadora/calcular"
 
-<h3>PricingCalculator</h3>
+@using Microsoft.Extensions.Options
+@using System.Threading.Channels
+@inject ISnackbar SnackBar
+@inject HttpClient client
 
-@code {
+<PageTitle>Calculadora de preços</PageTitle>
+<script>
+    function clickDownloadLink() {
+    const link = document.getElementById('download-link');
+    if (link) {
+        link.click();
+    }
+}</script>
+<MudContainer Class="mt-8 px-8 mb-8">
+    <MudGrid>
+        <MudItem sm="5"xs="12">
+            <MudText Class="ml-2">Canal de venda</MudText>
+            <MudSelect T="string" 
+                ValueChanged="OnCanalValueChanged"
+                Variant="Variant.Outlined"
+                AnchorOrigin="Origin.BottomCenter">     
+                @foreach (var channel in channels)
+                {
+                    <MudSelectItem Value="@channel.Channel">@channel.Channel</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
 
-}
+    <MudDivider Class="mt-8" Style="height: 2.2px; background-color: #666666"/>
+
+    @if(channel != null){
+        <CalculateSalePrice @key="channel" Channel="channel"/>
+    }
+</MudContainer>

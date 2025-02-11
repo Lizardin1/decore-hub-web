@@ -1,6 +1,134 @@
 ﻿@page "/calculadora/config"
-<h3>Configurations</h3>
+@using Microsoft.Extensions.Options
+@using decorehubweb.Pages.Calculator.Models;
+@inject ISnackbar SnackBar
+@inject HttpClient client
 
-@code {
+<PageTitle>Configurações</PageTitle>
 
-}
+
+<MudContainer Class="mt-10 px-20 mb-20">
+    <MudGrid>
+        <MudItem xs="3" Class="pl-20">
+            <MudText Typo="Typo.h6">
+                Canal de venda
+            </MudText>
+        </MudItem>
+        <MudItem xs="3" style="padding-left: 130px;">
+            <MudText Typo="Typo.h6">
+                Ads
+            </MudText>
+        </MudItem>
+        <MudItem xs="3" style="padding-left: 110px;">
+            <MudText Typo="Typo.h6">
+                Comissão
+            </MudText>
+        </MudItem>
+        <MudItem xs="3" style="padding-left: 110px;">
+            <MudText Typo="Typo.h6">
+                Imposto
+            </MudText>
+        </MudItem>
+        <MudDivider Class="mt-8" Style="height: 2.2px; background-color: #666666" />
+        @foreach (var channel in channels)
+        {
+            <MudItem xs="3">
+                <MudTextField Variant="Variant.Outlined" Value="@channel.Channel" />
+            </MudItem>
+            <MudItem xs="3">
+                <MudNumericField Culture="culture"
+                                 HideSpinButtons="true"
+                                 Variant="Variant.Outlined"
+                                 T="decimal"
+                                 ValueChanged="@(value => OnAdsChanged(value, channel.Id))"
+                                 Value="@channel.adsPercent"
+                                 Adornment="Adornment.End"
+                                 AdornmentIcon="@Icons.Material.Filled.Percent" />
+            </MudItem>
+            <MudItem xs="3">
+                <MudNumericField Culture="culture"
+                                 HideSpinButtons="true"
+                                 Variant="Variant.Outlined"
+                                 T="decimal"
+                                 ValueChanged="@(value => OnComissionChanged(value, channel.Id))"
+                                 Value="@channel.comissionPercent"
+                                 Adornment="Adornment.End"
+                                 AdornmentIcon="@Icons.Material.Filled.Percent" />
+            </MudItem>
+
+            <MudItem xs="2">
+                <MudNumericField Culture="culture"
+                                 HideSpinButtons="true"
+                                 Variant="Variant.Outlined"
+                                 T="decimal"
+                                 ValueChanged="@(value => OnTaxChanged(value))"
+                                 Value="@channel.taxPercent"
+                                 Adornment="Adornment.End"
+                                 AdornmentIcon="@Icons.Material.Outlined.Percent" />
+            </MudItem>
+            <MudItem xs="1">
+                <MudFab Class="mt-2" Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="() => ToggleCollapse(channel.Id)"></MudFab>
+            </MudItem>
+            <MudItem xs="12">
+                <MudCollapse Expanded="IsCollapseOpen(channel.Id)">
+                    <MudText>Comissão variável</MudText>
+                    <MudGrid>
+                        @foreach (var item in channel.variableComission)
+                        {
+                            <MudItem xs="4">
+                                <MudNumericField Culture="culture"
+                                                 HideSpinButtons="true"
+                                                 Variant="Variant.Outlined"
+                                                 T="decimal"
+                                                 Label="Valor inicial"
+                                                 ValueChanged="@(value => OnStartValueChanged(value, item.Id, channel.Id))"
+                                                 Value="@item.startValue"
+                                                 Adornment="Adornment.End"
+                                                 AdornmentIcon="@Icons.Material.Rounded.AttachMoney" />
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudNumericField Culture="culture"
+                                                 HideSpinButtons="true"
+                                                 Variant="Variant.Outlined"
+                                                 T="decimal"
+                                                 Label="Valor final"
+                                                 ValueChanged="@(value => OnEndValueChanged(value, item.Id, channel.Id))"
+                                                 Value="@item.endValue"
+                                                 Adornment="Adornment.End"
+                                                 AdornmentIcon="@Icons.Material.Outlined.AttachMoney" />
+                            </MudItem>
+                            <MudItem xs="3">
+                                <MudNumericField Culture="culture"
+                                                 HideSpinButtons="true"
+                                                 Variant="Variant.Outlined"
+                                                 T="decimal"
+                                                 Label="Percentual"
+                                                 ValueChanged="@(value => OnPercentChanged(value, item.Id, channel.Id))"
+                                                 Value="@item.percent"
+                                                 Adornment="Adornment.End"
+                                                 AdornmentIcon="@Icons.Material.Outlined.Percent" />
+                            </MudItem>
+                            <MudItem xs="1">
+                                <MudFab Class="mt-4" Size="Size.Small" StartIcon="@Icons.Material.Rounded.Delete" OnClick="() => DeleteItem(item.Id, channel.Id)"></MudFab>
+                            </MudItem>
+                        }
+                        <MudItem xs="11" />
+                        <MudItem xs="1">
+                            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="() => AddNewItem(channel.Id)"></MudFab>
+                        </MudItem>
+                    </MudGrid>
+                </MudCollapse>
+            </MudItem>
+
+            <MudDivider Class="mt-8" Style="height: 2.2px; background-color: #666666" />
+        }
+        <MudPaper Class="pt-4" Style="position: fixed; bottom: 0; left: 0;  width: 100%;background-color: #333333; height:75px; " Elevation="5">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudButton Class="mr-20" Style="border-radius: 25px; width:200px; float:right;" Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">Atualizar</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudGrid>
+</MudContainer>
+
